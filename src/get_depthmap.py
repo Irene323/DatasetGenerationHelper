@@ -71,4 +71,5 @@ def main():
 if __name__ == "__main__":
     main()
     # Usage:
-    #--imagefolder /cv/projects/boneDescriptors/projects/bones/colmap/Basle/Ailurus_fulgens/dense_2000/images --binfolder /cv/projects/boneDescriptors/projects/bones/colmap/Basle/Ailurus_fulgens/dense_2000/stereo/depth_maps --txtfolder ../our/depth_maps
+    #--imagefolder /cv/projects/boneDescriptors/projects/bones/colmap/Basle/Ailurus_fulgens/dense_2000/images --binfolder /cv/projects/boneDescriptors/projects/bones/colmap/Basle/Ailurus_fulgens/dense_2000/stereo/depth_maps --txtfolder ../out/af/depth_maps
+    #--imagefolder /cv/projects/boneDescriptors/projects/bones/colmap/Basle/Apteryx_owenii/dense/images --binfolder /cv/projects/boneDescriptors/projects/bones/colmap/Basle/Apteryx_owenii/dense/stereo/depth_maps --txtfolder ../out/ao/depth_maps

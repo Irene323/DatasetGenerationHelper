@@ -7,6 +7,8 @@ import math
 import tempfile
 import IPython.display
 from prev.srgb import to_linear, from_linear
+import glob
+
 
 def show_cv_image(img):
     # Can not use Matplotlib because it scales images again.
@@ -25,108 +27,103 @@ def parse_args():
     return args
 
 
+def getSigmas():
+    ret = []
+    s = 3
+    sigma = 1.6
+    for a in range(4):
+        row = []
+        for i in range(s + 3):
+            row.append((2 ** a) * (2 ** (float(i) / float(s))) * sigma)
+        ret.append(row)
+    return ret
+
+
+def getBlur(img, sigma_now, sigma_aim):
+    kernel_size = (0, 0)
+    fimg = to_linear(img)
+    fblur = cv2.GaussianBlur(fimg, kernel_size, (sigma_aim ** 2.0 - sigma_now ** 2.0) ** .5)
+    imgblur = from_linear(fblur)
+    return imgblur
+
+
+def getResize(img, fx, fy):
+    fimg = to_linear(img)
+    fres = cv2.resize(fimg, None, fx=fx, fy=fy, interpolation=cv2.INTER_CUBIC)
+    imgresize = from_linear(fres)
+    return imgresize
+
+
 def main():
     args = parse_args()
-    separator = "/"
 
     indir = args.inpath
     outdir = args.outpath
-    base = np.array([0., 1. / 3, 2. / 3])
-    exp = np.array([2 ** b for b in base])
-    print(exp)
-    sigma = 1.6 * exp
-    print("sigma")
-    print(sigma)
 
+    sigma0 = 1.6
+    o = 4
+    s = 3
+
+    # generate base images with sigme=1.6
     folder = os.path.exists(outdir)
     if not folder:
         os.makedirs(outdir)
 
-    index = np.array([1, 2, 3])
-    for t0 in np.arange(5):  # t0 octave
-        for ind in index:  # ind layer
-            fpath = outdir + separator + "%d_" % t0 + "%d" % ind
-            f = os.path.exists(fpath)
-            if not f:
-                os.makedirs(fpath)
+    firstImgPath = outdir + "/{}".format(sigma0)
+    f = os.path.exists(firstImgPath)
+    if not f:
+        os.makedirs(firstImgPath)
 
+    sigma_orig = 0.5  # the original image is considered as sigma=0.5 blurred
     kernel_size = (0, 0)
     for filename in os.listdir(indir):
-        # img = Image.open(indir + separator + filename)
-        img = cv2.imread(indir + separator + filename)
+        img = cv2.imread(indir + '/' + filename)
+        fimg = to_linear(img)
+        fres = cv2.resize(fimg, None, fx=2.0, fy=2.0, interpolation=cv2.INTER_CUBIC)
+        fblur = cv2.GaussianBlur(fres, kernel_size, (sigma0 ** 2.0 - (2 * sigma_orig) ** 2.0) ** .5)
+        imgblur = from_linear(fblur)
+        # show_cv_image(imgblur)
+        new_imgName = firstImgPath + '/' + filename.rstrip(".JPG") + ".png"
+        cv2.imwrite(new_imgName, imgblur)
+    print('1.6 done')
 
-        for t10, sigma1 in zip(index, sigma):
-            fimg = to_linear(img)
-            dst = cv2.GaussianBlur(fimg, kernel_size, sigma1)
-            fres = cv2.resize(dst, None, fx=2.0, fy=2.0, interpolation=cv2.INTER_CUBIC)
-            fres = from_linear(fres)
-            show_cv_image(fres)
-            new_imgName = outdir + separator + '0_%d' % t10 + separator + filename
-            cv2.imwrite(new_imgName, fres)
+    origin_pics_folder = outdir + "/{}".format(sigma0)
+    pics = glob.glob(origin_pics_folder + '/*.png')
+    pics.sort()
+    # print(origin_pics_folder)
+    # print(pics)
 
-            # # previous way of upsampling
-            # shapenew = (dst.shape[1] * 2, dst.shape[0] * 2)
-            # dst = cv2.resize(dst, shapenew, interpolation=cv2.INTER_CUBIC)
-            # new_imgName = outdir + separator + '0_%d' % t10 + separator + filename
-            # cv2.imwrite(new_imgName, dst)
-
-        for t20, sigma2 in zip(index, sigma):
-            fimg = to_linear(img)
-            dst = cv2.GaussianBlur(fimg, kernel_size, sigma2)
-            dst = from_linear(dst)
-            show_cv_image(dst)
-            new_imgName = outdir + separator + '1_%d' % t20 + separator + filename
-            print(new_imgName)
-            cv2.imwrite(new_imgName, dst)
-
-        for t30, sigma3 in zip(index, sigma):
-            fimg = to_linear(img)
-            dst = cv2.GaussianBlur(fimg, kernel_size, sigma3)
-            fres = cv2.resize(dst, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_CUBIC)
-            fres = from_linear(fres)
-            show_cv_image(fres)
-            new_imgName = outdir + separator + '2_%d' % t30 + separator + filename
-            cv2.imwrite(new_imgName, fres)
-
-            # shapenew = (int(dst.shape[1] / 2), int(dst.shape[0] / 2))
-            # dst = cv2.resize(dst, shapenew, interpolation=cv2.INTER_CUBIC)
-            # new_imgName = outdir + separator + '2_%d' % t30 + separator + filename
-            # print(new_imgName)
-            # cv2.imwrite(new_imgName, dst)
-
-        for t40, sigma4 in zip(index, sigma):
-            fimg = to_linear(img)
-            dst = cv2.GaussianBlur(fimg, kernel_size, sigma4)
-            fres = cv2.resize(dst, None, fx=0.25, fy=0.25, interpolation=cv2.INTER_CUBIC)
-            fres = from_linear(fres)
-            show_cv_image(fres)
-            new_imgName = outdir + separator + '3_%d' % t40 + separator + filename
-            cv2.imwrite(new_imgName, fres)
-
-            # shapenew = (int(dst.shape[1] / 4), int(dst.shape[0] / 4))
-            # dst = cv2.resize(dst, shapenew, interpolation=cv2.INTER_CUBIC)
-            # print(new_imgName)
-            # new_imgName = outdir + separator + '3_%d' % t40 + separator + filename
-            # cv2.imwrite(new_imgName, dst)
-
-        for t50, sigma5 in zip(index, sigma):
-            fimg = to_linear(img)
-            dst = cv2.GaussianBlur(fimg, kernel_size, sigma5)
-            fres = cv2.resize(dst, None, fx=0.125, fy=0.125, interpolation=cv2.INTER_CUBIC)
-            fres = from_linear(fres)
-            show_cv_image(fres)
-            new_imgName = outdir + separator + '4_%d' % 50 + separator + filename
-            cv2.imwrite(new_imgName, fres)
-
-            # shapenew = (int(dst.shape[1] / 8), int(dst.shape[0] / 8))
-            # dst = cv2.resize(dst, shapenew, interpolation=cv2.INTER_CUBIC)
-            # print(new_imgName)
-            # new_imgName = outdir + separator + '4_%d' % t50 + separator + filename
-            # cv2.imwrite(new_imgName, dst)
-    print("done")
+    total_sigmas = getSigmas()
+    c=0
+    for p_path in pics:
+        c+=1
+        pic_pyramid = list()
+        pic_base = cv2.imread(p_path)
+        # cv2.imshow('pic_base', pic_base)
+        # cv2.waitKey()
+        for octave in range(o):
+            sigmas = total_sigmas[octave]
+            pic_layer = [pic_base]
+            for layer in range(s + 2):
+                pic_layer.append(getBlur(pic_layer[-1], sigma_now=sigmas[layer], sigma_aim=sigmas[layer + 1]))
+                # print(sigmas[layer+1])
+            pic_base = getResize(pic_layer[-3], 0.5, 0.5)
+            pic_pyramid.append(pic_layer)
+        print('{}/{} pyramid done: {}'.format(c, len(pics), p_path))
+        for l in range(len(pic_pyramid)):
+            for i in range(1, 4):
+                # cv2.imshow('pyramid', pic_pyramid[l][i])
+                # cv2.waitKey()
+                save_path = outdir + '/{}'.format(total_sigmas[l][i]) + '/'
+                f = os.path.exists(save_path)
+                if not f:
+                    os.makedirs(save_path)
+                cv2.imwrite(save_path + p_path.split('/')[-1].rstrip('.JPG'), pic_pyramid[l][i])
+        print('save done')
 
 
 if __name__ == "__main__":
     main()
     # Usage:
-    # --inpath /cv/projects/boneDescriptors/projects/bones/colmap/Basle/Ailurus_fulgens/dense_2000/images --outpath ../out/scale
+    # --inpath /cv/projects/boneDescriptors/projects/bones/colmap/Basle/Ailurus_fulgens/dense_2000/images --outpath ../out/af/scale
+    # --inpath /cv/projects/boneDescriptors/projects/bones/colmap/Basle/Apteryx_owenii/dense/images --outpath ../out/ao/scale

@@ -36,3 +36,4 @@ if __name__ == "__main__":
     main()
     # Usage:
     # --imagefolder /cv/projects/boneDescriptors/projects/bones/colmap/Basle/Ailurus_fulgens/dense_2000/images --lstrip IMG_ --rstrip .JPG --outtxtfolder ../out/namelist.txt
+    # --imagefolder /cv/projects/boneDescriptors/projects/bones/colmap/Basle/Apteryx_owenii/dense/images --lstrip IMG_ --rstrip .JPG --outtxtfolder ../out/ao/namelist.txt

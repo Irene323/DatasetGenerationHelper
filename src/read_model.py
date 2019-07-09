@@ -303,31 +303,31 @@ def main():
 
     cameras, images, points3D = read_model(path=sys.argv[1], ext=sys.argv[2])
 
-    txt_dir = '../out/cameras_images_txt/'
-    # folder = os.path.exists(txt_dir)
-    # if not folder:
-    #     os.makedirs(txt_dir)
-    # with open(txt_dir+'cameras.txt', 'w') as wcameras:
-    #     for i in range(1, len(cameras)+1):
-    #         wcameras.write(str(cameras[i].id)+' '+\
-    #                        cameras[i].model+' '+\
-    #                        str(cameras[i].width)+' '+\
-    #                        str(cameras[i].height))
-    #         for p in cameras[i].params:
-    #             wcameras.write(' '+str(p))
-    #         wcameras.write('\n')
-    # with open(txt_dir + 'images.txt', 'w') as wimages:
-    #     for i in range(1, len(images)+1):
-    #         wimages.write(str(images[i].id)+' '+\
-    #                       str(images[i].qvec[0])+' '+\
-    #                       str(images[i].qvec[1])+' '+\
-    #                       str(images[i].qvec[2])+' '+\
-    #                       str(images[i].qvec[3])+' '+\
-    #                       str(images[i].tvec[0])+' '+\
-    #                       str(images[i].tvec[1])+' '+\
-    #                       str(images[i].tvec[2])+' '+\
-    #                       str(images[i].camera_id)+' '+\
-    #                       images[i].name+'\n')
+    txt_dir = '../out/ao/cameras_images_txt/'
+    folder = os.path.exists(txt_dir)
+    if not folder:
+        os.makedirs(txt_dir)
+    with open(txt_dir+'cameras.txt', 'w') as wcameras:
+        for i in range(1, len(cameras)+1):
+            wcameras.write(str(cameras[i].id)+' '+\
+                           cameras[i].model+' '+\
+                           str(cameras[i].width)+' '+\
+                           str(cameras[i].height))
+            for p in cameras[i].params:
+                wcameras.write(' '+str(p))
+            wcameras.write('\n')
+    with open(txt_dir + 'images.txt', 'w') as wimages:
+        for i in range(1, len(images)+1):
+            wimages.write(str(images[i].id)+' '+\
+                          str(images[i].qvec[0])+' '+\
+                          str(images[i].qvec[1])+' '+\
+                          str(images[i].qvec[2])+' '+\
+                          str(images[i].qvec[3])+' '+\
+                          str(images[i].tvec[0])+' '+\
+                          str(images[i].tvec[1])+' '+\
+                          str(images[i].tvec[2])+' '+\
+                          str(images[i].camera_id)+' '+\
+                          images[i].name+'\n')
 
     print(cameras)
     print(images[1])
