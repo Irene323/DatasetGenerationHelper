@@ -1,22 +1,22 @@
 import numpy as np
 import argparse
-from PIL import Image, ImageFilter
+# from PIL import Image, ImageFilter
 import os
 import cv2
 import math
 import tempfile
-import IPython.display
+# import IPython.display
 from prev.srgb import to_linear, from_linear
 import glob
 
 
-def show_cv_image(img):
-    # Can not use Matplotlib because it scales images again.
-    (handle, tmpname) = tempfile.mkstemp(suffix='.png')
-    os.close(handle)
-    cv2.imwrite(tmpname, img)
-    IPython.display.display(IPython.display.Image(tmpname))
-    os.unlink(tmpname)
+# def show_cv_image(img):
+#     # Can not use Matplotlib because it scales images again.
+#     (handle, tmpname) = tempfile.mkstemp(suffix='.png')
+#     os.close(handle)
+#     cv2.imwrite(tmpname, img)
+#     IPython.display.display(IPython.display.Image(tmpname))
+#     os.unlink(tmpname)
 
 
 def parse_args():
@@ -63,13 +63,14 @@ def main():
     sigma0 = 1.6
     o = 4
     s = 3
+    separator = '\\'
 
     # generate base images with sigme=1.6
     folder = os.path.exists(outdir)
     if not folder:
         os.makedirs(outdir)
 
-    firstImgPath = outdir + "/{}".format(sigma0)
+    firstImgPath = outdir + separator+ "%.1f" % sigma0
     f = os.path.exists(firstImgPath)
     if not f:
         os.makedirs(firstImgPath)
@@ -87,8 +88,8 @@ def main():
         cv2.imwrite(new_imgName, imgblur)
     print('1.6 done')
 
-    origin_pics_folder = outdir + "/{}".format(sigma0)
-    pics = glob.glob(origin_pics_folder + '/*.png')
+    origin_pics_folder = outdir + separator + "%.1f" % sigma0
+    pics = glob.glob(origin_pics_folder + separator + '*.png')
     pics.sort()
     # print(origin_pics_folder)
     # print(pics)
@@ -96,6 +97,7 @@ def main():
     total_sigmas = getSigmas()
     c=0
     for p_path in pics:
+        # print(p_path)
         c+=1
         pic_pyramid = list()
         pic_base = cv2.imread(p_path)
@@ -114,11 +116,12 @@ def main():
             for i in range(1, 4):
                 # cv2.imshow('pyramid', pic_pyramid[l][i])
                 # cv2.waitKey()
-                save_path = outdir + '/{}'.format(total_sigmas[l][i]) + '/'
+                save_path = outdir + separator + "%.1f" % total_sigmas[l][i] + separator
                 f = os.path.exists(save_path)
                 if not f:
                     os.makedirs(save_path)
-                cv2.imwrite(save_path + p_path.split('/')[-1].rstrip('.JPG'), pic_pyramid[l][i])
+                # print(save_path + p_path.split(separator)[-1])
+                cv2.imwrite(save_path + p_path.split(separator)[-1], pic_pyramid[l][i])
         print('save done')
 
 

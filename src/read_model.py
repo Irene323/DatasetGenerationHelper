@@ -297,13 +297,13 @@ def rotmat2qvec(R):
 
 
 def main():
-    if len(sys.argv) != 3:
-        print("Usage: python read_model.py path/to/model/folder [.txt,.bin]")
+    if len(sys.argv) != 4:
+        print("Usage: python read_model.py path/to/model/folder [.txt,.bin] path/to/output/folder")
         return
 
     cameras, images, points3D = read_model(path=sys.argv[1], ext=sys.argv[2])
 
-    txt_dir = '../out/ao/cameras_images_txt/'
+    txt_dir = sys.argv[3]#'../out/ao/cameras_images_txt/'
     folder = os.path.exists(txt_dir)
     if not folder:
         os.makedirs(txt_dir)
