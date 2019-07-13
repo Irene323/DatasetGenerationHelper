@@ -49,7 +49,8 @@ def read_array(path):
 
 
 def main():
-    depth_map = read_array("/cv/projects/boneDescriptors/projects/bones/colmap/Basle/Ailurus_fulgens/dense_2000/stereo/depth_maps/IMG_2047.JPG.geometric.bin")
+    # depth_map = read_array("/cv/projects/boneDescriptors/projects/bones/colmap/Basle/Ailurus_fulgens/dense_2000/stereo/depth_maps/IMG_2049.JPG.geometric.bin")
+    depth_map = read_array("/cv/projects/boneDescriptors/projects/bones/colmap/Basle/Apteryx_owenii/dense/stereo/depth_maps/IMG_2309.JPG.geometric.bin")
 
     # Visualize the depth map.
     min_depth, max_depth = np.percentile(depth_map, [0, 95])

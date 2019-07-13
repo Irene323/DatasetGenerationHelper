@@ -63,7 +63,7 @@ def main():
     sigma0 = 1.6
     o = 4
     s = 3
-    separator = '\\'
+    separator = '/'
 
     # generate base images with sigme=1.6
     folder = os.path.exists(outdir)
@@ -116,7 +116,7 @@ def main():
             for i in range(1, 4):
                 # cv2.imshow('pyramid', pic_pyramid[l][i])
                 # cv2.waitKey()
-                save_path = outdir + separator + "%.1f" % total_sigmas[l][i] + separator
+                save_path = outdir + separator + str(l) + separator
                 f = os.path.exists(save_path)
                 if not f:
                     os.makedirs(save_path)

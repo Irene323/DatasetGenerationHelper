@@ -338,3 +338,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+    # Usage:
+    # /cv/projects/boneDescriptors/projects/bones/colmap/Basle/Ailurus_fulgens/dense_2000/sparse/ .bin ../out/af/cameras_images_txt/
+    # /cv/projects/boneDescriptors/projects/bones/colmap/Basle/Apteryx_owenii/dense/sparse/ .bin ../out/ao/cameras_images_txt/

@@ -68,4 +68,5 @@ def main():
 if __name__ == "__main__":
     main()
     # Usage:
+    # --database_path /home/yirenli/data/databases/af_2000.db --keypoints_path ../out/af/keypoints --descriptors_path ../out/af/descriptors --first_id 2042
     # --database_path /home/yirenli/data/databases/ao_2000.db --keypoints_path ../out/ao/keypoints --descriptors_path ../out/ao/descriptors --first_id 2309
